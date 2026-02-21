@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>个人简介</title>
+	<meta name="description" content="简洁的个人简介页面，包含封面与关于两部分。">
+	<style>
+		:root{--bg:#0b1220;--accent:#4dd0e1;--text:#eef6fb;--muted:#9aa4b2;--glass-opacity:0.28;--glass-blur:10px}
+		*{box-sizing:border-box}
+			body{margin:0;font-family:Inter,Segoe UI,Helvetica,Arial,sans-serif;color:var(--text);
+				/* 背景图片：将 background1.jpg 放在与 index.html 同一目录 */
+				background-image: url('background1.jpg');
+				background-size: cover;
+				background-position: center center;
+				background-repeat: no-repeat;
+			}
+		.cover{min-height:56vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:48px 20px}
+		.cover .inner{max-width:820px}
+		/* 毛玻璃面板 */
+		.glass{background:rgba(255,255,255,var(--glass-opacity));
+			backdrop-filter: blur(var(--glass-blur));
+			-webkit-backdrop-filter: blur(var(--glass-blur));
+			padding:34px;border-radius:20px;display:inline-block;max-width:100%;color:#042}
+		.glass .btn{background:rgba(6,182,212,0.12);color:#042;border-radius:10px;padding:10px 14px;text-decoration:none;font-weight:700}
+		h1{font-size:2.2rem;margin:0 0 8px}
+		p.lead{margin:0;color:var(--muted);font-size:1.05rem}
+		.actions{margin-top:18px}
+		.btn{display:inline-block;padding:10px 14px;border-radius:8px;background:var(--accent);color:#042; font-weight:700;text-decoration:none;margin:0 8px}
+		.about{background:rgba(255,255,255,0.02);padding:28px 20px;border-radius:12px;max-width:920px;margin:-40px auto 40px;position:relative}
+		.container{padding:0 20px}
+		@media(max-width:640px){h1{font-size:1.6rem}.about{margin:-20px 12px 24px}}
+		footer{text-align:center;color:var(--muted);padding:14px 0}
+	</style>
+</head>
+<body>
+	<main>
+		<section class="cover">
+			<div class="inner">
+				<div class="glass">
+					<h1>你好，我是 HanLi</h1>
+					<p class="lead">研究生在读 · 简洁实用的界面与可维护的代码。欢迎查看我的简介并与我联系。</p>
+					<div class="actions">
+						<a class="btn" href="#about">关于我</a>
+						<a class="btn" href="mailto:you@example.com">联系我</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="about" class="container">
+			<div class="about">
+				<h2 style="margin-top:0">关于</h2>
+				<p style="color:var(--muted)">我是一名研究生，专注于构建性能良好、交互友好且易于维护的 Web 应用。平时喜欢把复杂的问题拆成小步实现，并注重无障碍与移动端体验。</p>
+				<p style="color:var(--muted)">技能：HTML / CSS / JavaScript / React / TypeScript 。邮箱：<a href="mailto:you@example.com" style="color:var(--accent)">you@example.com</a></p>
+			</div>
+		</section>
+
+		<footer>
+			<div>© 2025 HanLi • 个人简介 — 本网站全部由 GitHub Copilot 开发</div>
+		</footer>
+	</main>
+
+	<script>
+	// 自动根据背景图片亮度调整毛玻璃面板的不透明度（偏白方向）
+	(function adjustGlass(){
+		const src = 'background1.jpg';
+		const img = new Image();
+		img.crossOrigin = 'Anonymous';
+		img.src = src + '?_=' + Date.now(); // 防缓存
+		img.onload = function(){
+			try{
+				const w = 100;
+				const h = Math.max(1, Math.round(img.height * (w / img.width)));
+				const c = document.createElement('canvas');
+				c.width = w; c.height = h;
+				const ctx = c.getContext('2d');
+				ctx.drawImage(img, 0, 0, w, h);
+				const data = ctx.getImageData(0, 0, w, h).data;
+				let total = 0, count = 0;
+				for(let i = 0; i < data.length; i += 4){
+					const r = data[i], g = data[i+1], b = data[i+2];
+					const l = 0.2126*r + 0.7152*g + 0.0722*b;
+					total += l; count++;
+				}
+				const avg = total / count; // 0 - 255
+				// 为毛玻璃选择偏白的不透明度范围：使用更高的默认/上限以产生更明显的毛玻璃效果
+				let opacity = 0.18 + (avg / 255) * 0.32; // 0.18 .. 0.50
+				opacity = Math.max(0.12, Math.min(0.6, opacity));
+				document.documentElement.style.setProperty('--glass-opacity', opacity.toFixed(3));
+			}catch(err){
+				document.documentElement.style.setProperty('--glass-opacity', '0.12');
+			}
+		};
+		img.onerror = function(){
+			document.documentElement.style.setProperty('--glass-opacity', '0.28');
+		};
+	})();
+	</script>
+</body>
+</html>
+
